@@ -6,53 +6,45 @@ http://www.fec.gov/finance/disclosure/metadata/DataDictionaryContributionstoCand
 
 import fileinput
 import csv
-
-total = 0.0
 trans_amt_list = []
-median = 0.0
-mean = 0.0
-variance = 0.0
-candidate_dict = {}
-for row in csv.reader(fileinput.input(), delimiter='|'):
-    # if not fileinput.isfirstline():
-    transaction_amt = float(row[14])
-    total += transaction_amt
-    trans_amt_list.append(transaction_amt)
-    if row[16] != "" and candidate_dict.get(row[16]) is None:
-    	candidate_dict[row[16]] = 1
-        ###
-        # TODO: calculate other statistics here
-        # You may need to store numbers in an array to access them together
-        ##/
-###
-# TODO: aggregate any stored numbers here
-#
-##/
-# Get min, max and median of transaction amount list
-trans_amt_list.sort()
-count = len(trans_amt_list)
-mean = total/float(count)
-if count%2 == 0:
-	median = (trans_amt_list[count/2 - 1] + trans_amt_list[count/2])/2
-else:
-	median = trans_amt_list[count/2]
-# Calculate SD
-for amt in trans_amt_list:
-	variance += (amt - mean)**2/count
+
+def build_candidate_dict():
+    candidate_dict = {}
+    for row in csv.reader(fileinput.input(), delimiter='|'):
+        # if not fileinput.isfirstline():
+        if row[14] != "":
+            transaction_amt = float(row[14])
+            trans_amt_list.append(transaction_amt)
+
+            # ignore the transaction_amt without corresponding candidate ID
+            if row[16] != "":
+                if candidate_dict.get(row[16]) is None:
+                    candidate_dict[row[16]] = [transaction_amt]
+                else:
+                    candidate_dict[row[16]].append(transaction_amt)
+    return candidate_dict
 
 
-##### Print out the stats
-print "Total: %s" % total
-print "Minimum: %s" % trans_amt_list[0]
-print "Maximum: %s" % trans_amt_list[-1]
-print "Mean: %.2f" % mean
-print "Median: %s" % median
-# square root can be calculated with N**0.5
-print "Standard Deviation: %.2f" % (variance**0.5)
+def calc_stats(amt_list):
 
-##### Comma separated list of unique candidate ID numbers
-print "Candidates: %s unique candidate ID numbers" % len(candidate_dict.keys())
-print ",".join(candidate_dict.keys())
+    amt_list.sort()
+    minimum = amt_list[0]
+    maximum = amt_list[-1]
+
+    total = sum(amt_list)
+    count = len(amt_list)
+    mean = total/float(count)
+
+    # Calculate median
+    if count%2 == 0:
+        median = (amt_list[count/2 - 1] + amt_list[count/2])/2
+    else:
+        median = amt_list[count/2]
+
+    # Calculate SD
+    sd = sum([(amt - mean)**2/count for amt in amt_list])**0.5
+
+    return (total, minimum, maximum, mean, median, sd)    
 
 def minmax_normalize(value):
     """Takes a donation amount and returns a normalized value between 0-1. The
@@ -63,5 +55,30 @@ def minmax_normalize(value):
     ###/
     return norm
 
-##### Normalize some sample values
-print "Min-max normalized values: %r" % map(minmax_normalize, [2500, 50, 250, 35, 8, 100, 19])
+if __name__ == "__main__":
+        ###
+        # TODO: calculate other statistics here
+        # You may need to store numbers in an array to access them together
+        ##/
+###
+# TODO: aggregate any stored numbers here
+##
+# Get min, max and median of transaction amount list
+    candidate_dict = build_candidate_dict()
+    stats = calc_stats(trans_amt_list) #trans_amt_list will be sorted in this step
+                                       #then can be used in minmax_normalize
+    ##### Print out the stats
+    print "Total: %s" % stats[0]
+    print "Minimum: %s" % stats[1]
+    print "Maximum: %s" % stats[2]
+    print "Mean: %.2f" % stats[3]
+    print "Median: %s" % stats[4]
+    # square root can be calculated with N**0.5
+    print "Standard Deviation: %.2f" % stats[5]
+
+    ##### Comma separated list of unique candidate ID numbers
+    print "Candidates: %s unique candidate ID numbers" % len(candidate_dict.keys())
+    print ",".join(candidate_dict.keys())
+
+    ##### Normalize some sample values
+    print "Min-max normalized values: %r" % map(minmax_normalize, [2500, 50, 250, 35, 8, 100, 19])
