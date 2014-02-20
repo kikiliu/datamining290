@@ -1,0 +1,28 @@
+1. What are the types of data available to you?
+
+After separating the achive of yelp data(http://www.yelp.com/dataset_challenge/), I see four data sets in json format. 
+a. Business includes (sorted by original order):
+    'business_id','full_address','open','categories','city','review_count','name','neighborhoods','longitude','state','stars','latitude','type'
+b. checkin includes:
+	'checkin_info'(includes checkin time by day of week and the hour at 24 hours scale),'type',"business_id"
+c. review:
+	'votes','user_id','review_id','stars','date','text','type','business_id'
+d. user:
+	'votes','user_id','name','average_stars','review_count','type'
+
+2. For data sets: how many records are in the data set?
+
+a. Business: 11537
+b. checkin: 8282
+c. review: 229907
+d. user: 43873
+
+3. Provide an "interesting" record, explain its properties and why it is interesting
+
+I grep the state information of business achive. 11534 out of total 11537 business locate at AZ with the left three from SC, CO and CA respectively. It is interesting to know the data are mainly from Arizona rather than from all states. Therefore, all following research on persona or business will be based on the samples from Arizona.
+
+4. What are 3 questions you could answer using your data?
+
+a. Checkin time distribution by business categories at the scale of 24 hours of the day for a given city/neighborhood. e.g. Would Phoenix have more user checkin at bakery distributed in late night than in the morning?
+b. User persona analysis. e.g. Does the user dining out on a regular basis? Does the user always write similar reviews for all business? Does It could also be used as spam detection or credibility measurement for user accounts.
+c. How is the business doing over time? e.g. According to history user reviews/rating, is the business getting better or worse?
