@@ -1,0 +1,2 @@
+Gini Index: 0.487709185938
+Gini Index after split: 0.478274311534
