@@ -2,7 +2,6 @@
 # Implement simple k-means clustering using 1 dimensional data
 #
 ##/
-
 dataset = [
     -13.65089255716321, -0.5409562932238607, -88.4726466247223,
     39.30158828358612, 4.066458182574449, 64.64143300482378,
@@ -25,15 +24,18 @@ def pick_centroids(xs, num):
     """Return list of num centroids given a list of numbers in xs"""
     ###
     # TODO select and return centroids
-    return [1, 2]
+    step = len(xs)/num
+    centroids = []
+    return ([xs[x] for x in range(1,len(xs),step)])
     ##/
+    # return random.sample(xs, num)
 
 
 def distance(a, b):
     """Return the distance of numbers a and b"""
     ###
     # TODO return correct expression
-    return 0
+    return abs(a-b)
     ##/
 
 
@@ -41,23 +43,23 @@ def centroid(xs):
     """Return the centroid number given a list of numbers, xs"""
     ###
     # TODO calculate and return centroid
-    return 0
+    return sum(xs)/len(xs)
     ##/
 
 
 def cluster(xs, centroids):
     """Return a list of clusters centered around the given centroids.  Clusters
-    are lists of numbers."""
+    are lists of numbers."""  #why not dictionary?
 
-    clusters = [[] for c in centroids]
+    clusters = [[] for c in centroids] # a list of empty array, totally equals to the number of centroids
 
     for x in xs:
-        # find the closest cluster to x
+        # find the closest cluster to x, return distance and centroid_id
         dist, cluster_id = min(
             (distance(x, c), cluster_id) for cluster_id, c in enumerate(centroids)
         )
         # place x in cluster
-        clusters[cluster_id].append(x)
+        clusters[cluster_id].append(x) ##in the sequence of centroids
 
     return clusters
 
@@ -71,7 +73,7 @@ def iterate_centroids(xs, centroids):
 
     while observed_error > err:
         new_clusters = cluster(xs, centroids)
-        new_centroids = map(centroid, new_clusters)
+        new_centroids = map(centroid, new_clusters) #apply to new_clusters
 
         observed_error = max(abs(new - old) for new, old in zip(new_centroids, centroids))
         centroids = new_centroids
@@ -89,6 +91,7 @@ def iterate_centroids(xs, centroids):
 initial_centroids = pick_centroids(dataset, k)
 final_centroids, final_clusters = iterate_centroids(dataset, initial_centroids)
 
+#mapping one by one
 for centroid, cluster in zip(final_centroids, final_clusters):
     print "Centroid: %s" % centroid
     print "Cluster contents: %r" % cluster
