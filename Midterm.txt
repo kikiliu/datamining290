@@ -1,0 +1,5 @@
+7.3 Dice
+The dice operation defines a subcube by performing a selection on two or more dimensons. e.g. extract the ads views with user_id in ("Jack", "Jed") and type in ("banner" and "text")
+
+11 Fixing gradient descent
+We should change the step size into smaller step to avoid larger result.
